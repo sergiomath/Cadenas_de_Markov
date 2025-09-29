@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ldconfig:*)",
+      "Bash(nvidia-smi:*)",
+      "Bash(export PATH=/usr/local/cuda/bin:$PATH)",
+      "Bash(export:*)",
+      "Bash(nvcc:*)",
+      "Bash(pip install:*)",
+      "Bash(rm:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

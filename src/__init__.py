@@ -9,7 +9,11 @@ from .markov_matrix import (
     calcular_distribucion_metodo_autovalores_gpu,
     calcular_distribucion_metodo_tiempo_retorno_gpu,
     crear_matriz_probabilidad_gpu,
-    GPU_AVAILABLE
+    GPU_AVAILABLE,
+    get_gpu_info,
+    clear_gpu_memory,
+    optimal_gpu_method,
+    benchmark_gpu_vs_cpu
 )
 
 __all__ = [
@@ -19,5 +23,9 @@ __all__ = [
     'calcular_distribucion_metodo_autovalores_gpu',
     'calcular_distribucion_metodo_tiempo_retorno_gpu',
     'crear_matriz_probabilidad_gpu',
-    'GPU_AVAILABLE'
+    'GPU_AVAILABLE',
+    'get_gpu_info',
+    'clear_gpu_memory',
+    'optimal_gpu_method',
+    'benchmark_gpu_vs_cpu'
 ]
