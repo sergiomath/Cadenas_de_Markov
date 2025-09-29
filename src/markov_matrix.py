@@ -117,53 +117,218 @@ def calcular_distribucion_metodo_tiempo_retorno(matriz):
     """
     Calcula la distribución estacionaria usando tiempos medios de retorno (Método 2).
 
-    Utiliza el teorema fundamental: πᵢ = 1/E[Tᵢ], donde E[Tᵢ] es el tiempo
+    El método se basa en el teorema: πᵢ = 1/E[Tᵢ] donde E[Tᵢ] es el tiempo
     esperado de retorno al estado i.
 
-    Para calcular E[Tᵢ], resolvemos el sistema:
-    - mᵢⱼ = 1 + Σₖ≠ᵢ pⱼₖ * mᵢₖ para j ≠ i
-    - mᵢᵢ = 1
+    Para calcular E[Tᵢ], resolvemos el sistema de ecuaciones:
+    Para cada estado j ≠ i: hⱼ = 1 + Σₖ≠ᵢ pⱼₖ * hₖ
+    Donde hⱼ es el tiempo esperado hasta llegar a i desde j.
 
     Args:
         matriz: numpy.ndarray - Matriz de transición P
 
     Returns:
-        numpy.ndarray: Distribución estacionaria π calculada con tiempos de retorno
+        numpy.ndarray: Distribución estacionaria π
     """
     n = matriz.shape[0]
+    P = matriz.copy()
+
+    # Primero obtenemos distribución aproximada con método 1 para comparar
+    try:
+        valores_propios, vectores_propios = np.linalg.eig(P.T)
+        indice_1 = np.argmin(np.abs(valores_propios - 1.0))
+        pi_ref = np.real(vectores_propios[:, indice_1])
+        pi_ref = np.abs(pi_ref) / np.sum(np.abs(pi_ref))
+    except:
+        # Si falla, usar distribución uniforme como referencia
+        pi_ref = np.ones(n) / n
+
+    # Calcular tiempos de retorno para cada estado
     tiempos_retorno = np.zeros(n)
 
-    # Para cada estado i, calcular el tiempo medio de retorno E[Tᵢ]
     for i in range(n):
-        # Construir el sistema para calcular los tiempos medios de primera pasada
-        # mᵢⱼ = tiempo esperado para llegar a i desde j
-        A = np.eye(n) - matriz.copy()
+        # Para el estado i, calcular tiempo medio de retorno
+        # Necesitamos resolver el sistema para h_j (j ≠ i)
 
-        # Para el estado destino i: mᵢᵢ = 0 (ya estamos ahí)
-        A[i, :] = 0
-        A[i, i] = 1
+        # Crear índices de estados que no son i
+        indices_no_i = [j for j in range(n) if j != i]
+        n_red = len(indices_no_i)
 
-        # Vector b: 1 para todos los estados excepto el destino
-        b = np.ones(n)
-        b[i] = 0
+        if n_red == 0:  # Solo un estado
+            tiempos_retorno[i] = 1.0
+            continue
 
-        # Resolver el sistema Am = b
-        m = np.linalg.solve(A, b)
+        # Matriz del sistema: (I - P_{-i,-i})h = 1
+        # donde P_{-i,-i} es P sin fila i y columna i
+        P_red = P[np.ix_(indices_no_i, indices_no_i)]
+        A = np.eye(n_red) - P_red
+        b = np.ones(n_red)
 
-        # El tiempo medio de retorno desde i es 1 + mᵢⱼ * pᵢⱼ sumado sobre j≠i
-        # Pero por la estructura del problema, E[Tᵢ] = 1 + Σⱼ≠ᵢ pᵢⱼ * mⱼ
-        tiempo_retorno = 1.0
-        for j in range(n):
-            if j != i:
-                tiempo_retorno += matriz[i, j] * m[j]
+        try:
+            # Resolver (I - P_red)h = 1
+            h = np.linalg.solve(A, b)
+        except np.linalg.LinAlgError:
+            # Si es singular, usar método iterativo estable
+            h = _resolver_tiempo_retorno_iterativo(P_red, b)
 
-        tiempos_retorno[i] = tiempo_retorno
+        # El tiempo de retorno desde i es:
+        # E[T_i] = 1 / π_i (teorema fundamental)
+        # Pero para calcularlo directamente:
+        # E[T_i] = 1 + Σ_{j≠i} P[i,j] * h[j]
+        tiempo_ret = 1.0
+        for idx, j in enumerate(indices_no_i):
+            tiempo_ret += P[i, j] * h[idx]
 
-    # Calcular la distribución estacionaria: πᵢ = 1/E[Tᵢ]
+        tiempos_retorno[i] = tiempo_ret
+
+    # Asegurar que los tiempos de retorno son positivos
+    tiempos_retorno = np.maximum(tiempos_retorno, 1e-15)
+
+    # Calcular distribución estacionaria: π_i = 1/E[T_i]
     pi = 1.0 / tiempos_retorno
 
-    # Normalizar para que sume 1
+    # Asegurar positividad antes de normalizar
+    pi = np.abs(pi)
     pi = pi / np.sum(pi)
+
+    # Verificación final de validez
+    if np.any(np.isnan(pi)) or np.any(pi < 0):
+        print("Warning: Método 2 produjo resultados inválidos, usando fallback")
+        return _metodo_tiempo_retorno_fallback(matriz)
+
+    return pi
+
+def _resolver_tiempo_retorno_iterativo(P_red, b, max_iter=5000, tol=1e-12):
+    """
+    Resolver (I - P_red)h = b usando método iterativo.
+    Reformula como h = P_red * h + b
+    """
+    n_red = len(b)
+    h = np.ones(n_red)  # Inicialización
+
+    for iteration in range(max_iter):
+        h_new = P_red @ h + b
+
+        # Verificar convergencia
+        if np.linalg.norm(h_new - h) < tol:
+            break
+
+        h = h_new
+
+    return h
+
+def _calcular_tiempo_retorno_iterativo(matriz, estado_destino, max_iter=1000, tol=1e-10):
+    """
+    Método iterativo para calcular tiempo de retorno cuando el método directo falla.
+
+    Args:
+        matriz: Matriz de transición
+        estado_destino: Estado para el cual calcular tiempo de retorno
+        max_iter: Máximo número de iteraciones
+        tol: Tolerancia de convergencia
+
+    Returns:
+        float: Tiempo medio de retorno al estado
+    """
+    n = matriz.shape[0]
+
+    # Inicializar tiempos esperados
+    m = np.zeros(n)
+    m[estado_destino] = 0.0  # Ya estamos en el destino
+
+    # Iteración de punto fijo
+    for iteration in range(max_iter):
+        m_new = np.zeros(n)
+        m_new[estado_destino] = 0.0
+
+        # Para cada estado no-destino
+        for j in range(n):
+            if j != estado_destino:
+                # m[j] = 1 + sum(P[j,k] * m[k] for k != estado_destino)
+                tiempo_esperado = 1.0
+                for k in range(n):
+                    if k != estado_destino:
+                        tiempo_esperado += matriz[j, k] * m[k]
+                m_new[j] = tiempo_esperado
+
+        # Verificar convergencia
+        if np.max(np.abs(m_new - m)) < tol:
+            break
+
+        m = m_new.copy()
+
+    # Calcular tiempo de retorno desde el estado destino
+    tiempo_retorno = 1.0
+    for k in range(n):
+        if k != estado_destino:
+            tiempo_retorno += matriz[estado_destino, k] * m[k]
+
+    return tiempo_retorno
+
+def _resolver_sistema_iterativo(A, b, max_iter=10000, tol=1e-12):
+    """
+    Resolver sistema Ax = b usando método iterativo cuando A es singular.
+
+    Args:
+        A: Matriz del sistema
+        b: Vector lado derecho
+        max_iter: Máximo número de iteraciones
+        tol: Tolerancia de convergencia
+
+    Returns:
+        np.ndarray: Solución aproximada
+    """
+    n = len(b)
+    x = np.ones(n)  # Inicialización
+
+    # Método de Jacobi modificado
+    for iteration in range(max_iter):
+        x_new = np.zeros(n)
+
+        for i in range(n):
+            if abs(A[i, i]) > 1e-15:  # Evitar división por cero
+                suma = 0.0
+                for j in range(n):
+                    if i != j:
+                        suma += A[i, j] * x[j]
+                x_new[i] = (b[i] - suma) / A[i, i]
+            else:
+                # Para filas con diagonal cero, usar promedio ponderado
+                x_new[i] = np.mean(x)
+
+        # Verificar convergencia
+        if np.linalg.norm(x_new - x) < tol:
+            break
+
+        x = x_new
+
+    return x
+
+def _metodo_tiempo_retorno_fallback(matriz):
+    """
+    Método de fallback usando iteración de potencias para distribución estacionaria.
+
+    Args:
+        matriz: numpy.ndarray - Matriz de transición
+
+    Returns:
+        numpy.ndarray: Distribución estacionaria aproximada
+    """
+    n = matriz.shape[0]
+
+    # Inicializar con distribución uniforme
+    pi = np.ones(n) / n
+
+    # Iteración de potencias: π = π * P
+    for iteration in range(10000):
+        pi_new = pi @ matriz
+        pi_new = pi_new / np.sum(pi_new)  # Renormalizar
+
+        # Verificar convergencia
+        if np.max(np.abs(pi_new - pi)) < 1e-12:
+            break
+
+        pi = pi_new
 
     return pi
 
@@ -235,7 +400,7 @@ def _metodo_potencias_gpu(P):
 
 def calcular_distribucion_metodo_tiempo_retorno_gpu(matriz):
     """
-    Versión GPU optimizada del Método 2: Tiempo medio de retorno vectorizado.
+    Versión GPU optimizada del Método 2: Tiempo medio de retorno.
 
     Args:
         matriz: numpy.ndarray - Matriz de transición P
@@ -246,9 +411,8 @@ def calcular_distribucion_metodo_tiempo_retorno_gpu(matriz):
     if not GPU_AVAILABLE:
         raise RuntimeError("CuPy no está disponible. Use la versión CPU.")
 
-    # Para matrices grandes, el Método 2 es inherentemente secuencial
-    # y no se beneficia mucho de GPU. Usar CPU para mejor rendimiento.
-    if matriz.shape[0] > 100:
+    # Para matrices grandes, usar CPU debido a complejidad O(n³) del método
+    if matriz.shape[0] > 200:
         return calcular_distribucion_metodo_tiempo_retorno(matriz)
 
     # Transferir matriz a GPU con tipo optimizado
@@ -256,50 +420,68 @@ def calcular_distribucion_metodo_tiempo_retorno_gpu(matriz):
     n = P.shape[0]
 
     try:
-        # Método vectorizado para matrices pequeñas/medianas
-        # Construir todas las matrices del sistema simultáneamente
-        I = cp.eye(n, dtype=cp.float64)
-        A_base = I - P
-
-        # Preparar matrices para todos los estados
+        # Calcular tiempos de retorno para cada estado (versión GPU)
         tiempos_retorno = cp.zeros(n, dtype=cp.float64)
 
-        # Procesar en lotes para mejor uso de memoria
-        batch_size = min(32, n)
-        for start_i in range(0, n, batch_size):
-            end_i = min(start_i + batch_size, n)
-            batch_size_actual = end_i - start_i
+        for i in range(n):
+            # Para el estado i, calcular tiempo medio de retorno
+            indices_no_i = [j for j in range(n) if j != i]
+            n_red = len(indices_no_i)
 
-            # Crear lote de matrices A
-            A_batch = cp.tile(A_base[None, :, :], (batch_size_actual, 1, 1))
-            b_batch = cp.ones((batch_size_actual, n), dtype=cp.float64)
+            if n_red == 0:  # Solo un estado
+                tiempos_retorno[i] = 1.0
+                continue
 
-            # Modificar cada matriz del lote
-            for idx, i in enumerate(range(start_i, end_i)):
-                A_batch[idx, i, :] = 0.0
-                A_batch[idx, i, i] = 1.0
-                b_batch[idx, i] = 0.0
+            # Extraer submatriz en GPU
+            indices_gpu = cp.array(indices_no_i)
+            P_red = P[cp.ix_(indices_gpu, indices_gpu)]
+            A = cp.eye(n_red, dtype=cp.float64) - P_red
+            b = cp.ones(n_red, dtype=cp.float64)
 
-            # Resolver sistemas en lote
-            m_batch = cp.linalg.solve(A_batch, b_batch)
+            try:
+                # Resolver (I - P_red)h = 1
+                h = cp.linalg.solve(A, b)
+            except cp.linalg.LinAlgError:
+                # Si es singular, usar método iterativo en GPU
+                h = _resolver_tiempo_retorno_iterativo_gpu(P_red, b)
 
-            # Calcular tiempos de retorno para este lote
-            for idx, i in enumerate(range(start_i, end_i)):
-                # Vectorizar el cálculo del tiempo de retorno
-                mask = cp.ones(n, dtype=bool)
-                mask[i] = False
-                tiempo_retorno = 1.0 + cp.sum(P[i, mask] * m_batch[idx, mask])
-                tiempos_retorno[i] = tiempo_retorno
+            # El tiempo de retorno desde i es:
+            # E[T_i] = 1 + Σ_{j≠i} P[i,j] * h[j]
+            tiempo_ret = 1.0
+            for idx, j in enumerate(indices_no_i):
+                tiempo_ret += P[i, j] * h[idx]
 
-        # Calcular distribución estacionaria
+            tiempos_retorno[i] = tiempo_ret
+
+        # Calcular distribución estacionaria: π_i = 1/E[T_i]
         pi = 1.0 / tiempos_retorno
         pi = pi / cp.sum(pi)
 
         return cp.asnumpy(pi)
 
-    except (cp.linalg.LinAlgError, cp.cuda.memory.MemoryError):
-        # Si falla GPU, usar CPU como respaldo
+    except (cp.linalg.LinAlgError, cp.cuda.memory.MemoryError, Exception) as e:
+        # Si falla GPU completamente, usar CPU como respaldo
+        print(f"GPU fallback activado: {str(e)[:50]}")
         return calcular_distribucion_metodo_tiempo_retorno(matriz)
+
+def _resolver_tiempo_retorno_iterativo_gpu(P_red, b, max_iter=5000, tol=1e-12):
+    """
+    Resolver (I - P_red)h = b usando método iterativo en GPU.
+    Reformula como h = P_red * h + b
+    """
+    n_red = len(b)
+    h = cp.ones(n_red, dtype=cp.float64)  # Inicialización
+
+    for iteration in range(max_iter):
+        h_new = P_red @ h + b
+
+        # Verificar convergencia
+        if cp.linalg.norm(h_new - h) < tol:
+            break
+
+        h = h_new
+
+    return h
 
 def crear_matriz_probabilidad_gpu(n, p):
     """
