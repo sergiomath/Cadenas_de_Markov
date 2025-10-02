@@ -224,7 +224,6 @@ print("✅ Todos los tests pasaron")
 Proyecto académico - Universidad Nacional de Colombia
 
 **Citar como:**
-```
-Díaz Vera, S.A. (2025). Análisis Computacional de Cadenas de Markov.
+```Análisis Computacional de Cadenas de Markov.
 Universidad Nacional de Colombia.
 ```
