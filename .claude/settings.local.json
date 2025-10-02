@@ -9,7 +9,10 @@
       "Bash(pip install:*)",
       "Bash(rm:*)",
       "Bash(cat:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(python test_notebooks.py:*)",
+      "Bash(python:*)",
+      "Bash(touch:*)"
     ],
     "deny": [],
     "ask": []

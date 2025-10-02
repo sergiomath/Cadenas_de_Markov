@@ -1,74 +1,111 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Documentación técnica para Claude Code trabajando en este proyecto.
 
-## Architecture Overview
+## Arquitectura
 
-This is a Python project for Markov chain analysis with the following key structure:
+Proyecto Python para análisis comparativo de métodos de cálculo de distribuciones estacionarias en cadenas de Markov.
 
-- **`src/markov_matrix.py`**: Core module containing:
-  - `crear_matriz_probabilidad(n, p)`: Creates transition probability matrices
-  - `calcular_distribucion_metodo_autovalores(matriz)`: Método 1 - Vectores propios (CPU)
-  - `calcular_distribucion_metodo_tiempo_retorno(matriz)`: Método 2 - Tiempo medio de retorno (CPU)
-  - `calcular_distribucion_metodo_autovalores_gpu(matriz)`: Método 1 - Versión GPU
-  - `calcular_distribucion_metodo_tiempo_retorno_gpu(matriz)`: Método 2 - Versión GPU
+### Estructura de Archivos
 
-- **`src/__init__.py`**: Package initialization that exports the main functions
+- **`src/markov_matrix.py`**: Módulo principal con implementaciones CPU/GPU
+  - `crear_matriz_probabilidad(n, p)`: Crea matriz de transición
+  - `calcular_distribucion_metodo_autovalores(matriz)`: Método 1 (Vectores propios)
+  - `calcular_distribucion_metodo_tiempo_retorno(matriz)`: Método 2 (Tiempos de retorno)
+  - `calcular_distribucion_metodo_autovalores_gpu(matriz)`: Método 1 GPU
+  - `calcular_distribucion_metodo_tiempo_retorno_gpu(matriz)`: Método 2 GPU
 
-- **`notebooks/metodo_vectores_propios.ipynb`**: Análisis de rendimiento Método 1 (vectores propios)
-- **`notebooks/metodo_sistema.ipynb`**: Análisis de rendimiento Método 2 (tiempo de retorno)
-- **`notebooks/gpu_benchmark.ipynb`**: Comparación CPU vs GPU
+- **`src/__init__.py`**: Exporta funciones principales
 
-- **`examples/ejemplo_basico.py`**: Uso básico del Método 1
-- **`examples/ejemplo_metodo_sistema.py`**: Uso básico del Método 2
-- **`examples/benchmark_cpu_vs_gpu.py`**: Benchmark completo CPU vs GPU
+- **`notebooks/`**: Análisis de rendimiento y benchmarks
+  - `metodo_vectores_propios.ipynb`: Benchmark Método 1
+  - `metodo_sistema.ipynb`: Benchmark Método 2
+  - `metodo_gpu_final.ipynb`: Comparación GPU vs CPU
 
-## Key Design Patterns
+- **`resultados/`**: CSVs con datos de benchmarks
 
-### Matrix Generation Logic
-The `crear_matriz_probabilidad(n, p)` function creates matrices with asymmetric transition rules:
-- **Initial state (0)**: probability `p` to advance, `1-p` to stay
-- **Intermediate states**: probability `p` to advance, `1-p` to retreat
-- **Final state (n-1)**: probability `p` to stay, `1-p` to retreat
+- **`docs/`**: Documento con descripción de la tarea original
 
-### Eigenvector Normalization
-The `calcular_vector_propio_dominante()` function normalizes eigenvectors so their components sum to 1, treating them as probability distributions.
+## Lógica del Modelo
 
-## Development Commands
+### Matriz de Transición
+`crear_matriz_probabilidad(n, p)` genera matrices con estructura:
+- **Estado 0**: probabilidad `p` avanzar, `1-p` quedarse
+- **Estados intermedios**: probabilidad `p` avanzar, `1-p` retroceder
+- **Estado n-1**: probabilidad `p` quedarse, `1-p` retroceder
 
-### Running Examples
-```bash
-# Basic example
-python examples/ejemplo_basico.py
+### Métodos de Cálculo
 
-# Interactive analysis
-jupyter notebook notebooks/methods.ipynb
-```
+**Método 1 (O(n³)):** Resuelve πP = π mediante eigendecomposición
+**Método 2 (O(n⁴)):** Calcula πᵢ = 1/E[Tᵢ] resolviendo n sistemas lineales
 
-### Installing Dependencies
+## Comandos de Desarrollo
+
+### Instalación
 ```bash
 pip install -r requirements.txt
 
-# Para aceleración GPU (opcional):
-pip install cupy-cuda11x  # para CUDA 11.x
-pip install cupy-cuda12x  # para CUDA 12.x
+# GPU (opcional)
+pip install cupy-cuda12x  # CUDA 12.x
+pip install cupy-cuda11x  # CUDA 11.x
 ```
 
-### Module Import Pattern
-When working in notebooks or scripts, use:
+### Ejecución
+```bash
+# Notebooks
+jupyter notebook notebooks/
+
+# Tests
+python -c "from src.markov_matrix import *; P = crear_matriz_probabilidad(5, 0.7); print(calcular_distribucion_metodo_autovalores(P))"
+```
+
+### Patrón de Importación
 ```python
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname('__file__'), '..'))
-from src.markov_matrix import crear_matriz_probabilidad, calcular_vector_propio_dominante
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.markov_matrix import *
 ```
 
-## Working with the Notebooks
+## Instrucciones para Claude Code
 
-The `methods.ipynb` notebook demonstrates:
-- Matrix creation with different parameters (n, p)
-- Eigenvalue/eigenvector analysis
-- Eigenvector normalization and sum verification
-- Tabular presentation using pandas DataFrames
+Estas instrucciones aplican a TODAS las interacciones con Claude Code en este proyecto:
 
-When modifying notebook imports, ensure the sys.path modification points to the project root to access the `src/` module.
+### Estilo de Comunicación
+- **Idioma**: Español siempre
+- **Tono**: Profesional, conciso, académico
+- **Documentación**: Docstrings en español con rigor matemático
+
+### Preferencias de Código
+- **Comentarios**: Mínimos y esenciales
+- **Variables**: Nombres descriptivos en español donde sea apropiado
+- **Simplicidad**: Código limpio sin prints excesivos
+
+### Manejo de Tareas
+- **Verificación**: Validar resultados antes de reportar completitud
+- **Testing**: Ejecutar tests al modificar funciones críticas
+- **Documentación**: Actualizar CLAUDE.md al agregar features
+
+### Contexto del Proyecto
+- Proyecto académico para comparación algorítmica
+- Benchmarking de rendimiento es crítico
+- Resultados deben ser reproducibles
+- Orientado a análisis cuantitativo de eficiencia computacional
+
+### Perfil: Sergio Andrés Díaz Vera
+Actuario y Científico de Datos colombiano con experiencia en sector asegurador.
+
+#### Generación de Documentación Técnica
+
+1. **Objetivos**: Definir claramente objetivo y criterios de éxito
+2. **Procesos**: Documentar detalladamente con herramientas y métodos
+3. **Resultados**: Cuantificar siempre con métricas e indicadores claros
+4. **Hallazgos**: Resumir con aplicabilidad y relevancia estratégica
+5. **Comunicación**: Traducir complejidad técnica a explicaciones claras
+6. **Transparencia**: Documentar supuestos, fuentes y limitaciones
+
+#### Valores
+- Rigor técnico accesible
+- Reproducibilidad total
+- Impacto medible
+- Transparencia en supuestos
+- Documentación para transferencia de conocimiento
