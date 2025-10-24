@@ -157,7 +157,7 @@ print(recomendacion)
 
 ```
 Cadenas_de_Markov/
-├── Primer_Parcial/               # Trabajo del Primer Parcial (25%)
+├── Primer_Parcial/               # Primer Parcial (25%)
 │   ├── src/
 │   │   ├── __init__.py
 │   │   └── markov_matrix.py      # Implementaciones CPU/GPU
@@ -168,18 +168,20 @@ Cadenas_de_Markov/
 │   ├── resultados/               # Datos de benchmarks
 │   ├── docs/
 │   │   └── Descripcion tarea 0 (1).pdf
-│   └── Tareas/                   # Tareas optativas
-├── Segundo_Parcial/              # Trabajo del Segundo Parcial (25%)
-│   └── Tareas/
-│       ├── Tarea_1/              # 10%
-│       ├── Tarea_2/              # 10%
-│       └── Tarea_3/              # 10%
+│   └── Tareas/                   # Tareas optativas (0, 0.1)
+├── Tareas/                       # Tareas del curso (30% total)
+│   ├── Tarea_1/                  # 10%
+│   ├── Tarea_2/                  # 10%
+│   └── Tarea_3/                  # 10%
 ├── Proyecto/                     # Proyecto Final (20%)
 │   ├── documento_escrito/        # 10%
 │   └── video/                    # 10%
 ├── requirements.txt
 ├── CLAUDE.md
+├── ESTRUCTURA_PROYECTO.md
 └── README.md
+
+Nota: El Segundo Parcial (25%) será agregado cuando esté disponible.
 ```
 
 ## Notebooks de Análisis

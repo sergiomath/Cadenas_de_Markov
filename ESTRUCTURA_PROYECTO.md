@@ -10,17 +10,18 @@
 | Componente | Peso | Fecha Entrega | Estado |
 |-----------|------|---------------|--------|
 | **Primer Parcial** | 25% | Lunes 6 de octubre | ✅ Completado |
-| Tarea 0 (Optativa) | - | Viernes 3 de octubre | - |
-| Tarea 0.1 (Optativa) | - | Lunes 6 de octubre | - |
+| - Tarea 0 (Optativa) | - | Viernes 3 de octubre | - |
+| - Tarea 0.1 (Optativa) | - | Lunes 6 de octubre | - |
 | **Segundo Parcial** | 25% | Jueves 4 de diciembre | ⏳ Pendiente |
-| Tarea 1 | 10% | Jueves 30 de octubre | ⏳ Pendiente |
-| Tarea 2 | 10% | ¿Jueves 13? | ⏳ Pendiente |
-| Tarea 3 | 10% | ¿Jueves 20? | ⏳ Pendiente |
+| **Tareas (independientes)** | 30% | - | - |
+| - Tarea 1 | 10% | Jueves 30 de octubre | ⏳ Pendiente |
+| - Tarea 2 | 10% | ¿Jueves 13? | ⏳ Pendiente |
+| - Tarea 3 | 10% | ¿Jueves 20? | ⏳ Pendiente |
 | **Proyecto Final** | 20% | ¿Martes 9 de diciembre? | ⏳ Pendiente |
-| Documento escrito | 10% | ~Semana 14 | ⏳ Pendiente |
-| Video | 10% | ~Semana 15 | ⏳ Pendiente |
+| - Documento escrito | 10% | ~Semana 14 | ⏳ Pendiente |
+| - Video | 10% | ~Semana 15 | ⏳ Pendiente |
 
-**Total evaluado:** 70%
+**Total:** 100% (25% + 25% + 30% + 20%)
 
 ---
 
@@ -40,14 +41,13 @@ Cadenas_de_Markov/
 │   │   └── metodo_gpu_final.ipynb
 │   ├── resultados/                       # Datos experimentales (CSV)
 │   ├── docs/                             # Descripción original
-│   └── Tareas/                           # Tareas optativas
+│   └── Tareas/                           # Tareas optativas (0, 0.1)
 │
-├── 📁 Segundo_Parcial/                   # 25% - Por hacer
+├── 📁 Tareas/                            # 30% total - Independientes
 │   ├── README.md
-│   └── Tareas/
-│       ├── Tarea_1/                      # 10%
-│       ├── Tarea_2/                      # 10%
-│       └── Tarea_3/                      # 10%
+│   ├── Tarea_1/                          # 10%
+│   ├── Tarea_2/                          # 10%
+│   └── Tarea_3/                          # 10%
 │
 ├── 📁 Proyecto/                          # 20% - Por hacer
 │   ├── README.md
@@ -58,6 +58,8 @@ Cadenas_de_Markov/
 ├── CLAUDE.md                             # Instrucciones para Claude Code
 ├── requirements.txt                      # Dependencias Python
 └── ESTRUCTURA_PROYECTO.md                # Este archivo
+
+Nota: Segundo Parcial (25%) se agregará cuando esté disponible.
 ```
 
 ---
@@ -97,21 +99,28 @@ pi = calcular_distribucion_metodo_autovalores(P)
 
 ---
 
-## 📝 Segundo Parcial (Pendiente)
+## 📝 Tareas del Curso (30% Total)
 
-### Tareas Programadas
+Tareas independientes (no asociadas a parciales).
 
 **Tarea 1 (10%)**
 - Entrega: Jueves 30 de octubre
-- Carpeta: `Segundo_Parcial/Tareas/Tarea_1/`
+- Carpeta: `Tareas/Tarea_1/`
 
 **Tarea 2 (10%)**
 - Entrega: ¿Jueves 13?
-- Carpeta: `Segundo_Parcial/Tareas/Tarea_2/`
+- Carpeta: `Tareas/Tarea_2/`
 
 **Tarea 3 (10%)**
 - Entrega: ¿Jueves 20?
-- Carpeta: `Segundo_Parcial/Tareas/Tarea_3/`
+- Carpeta: `Tareas/Tarea_3/`
+
+---
+
+## 📝 Segundo Parcial (25%)
+
+**Fecha:** Jueves 4 de diciembre
+**Estado:** Pendiente
 
 ---
 

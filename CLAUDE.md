@@ -10,23 +10,25 @@ Proyecto Python para análisis comparativo de métodos de cálculo de distribuci
 
 ```
 Cadenas_de_Markov/
-├── Primer_Parcial/               # Evaluación 25%
+├── Primer_Parcial/               # Primer Parcial 25%
 │   ├── src/                      # Código fuente
 │   ├── notebooks/                # Análisis y benchmarks
 │   ├── resultados/               # Datos experimentales
 │   ├── docs/                     # Descripción original
-│   └── Tareas/                   # Tareas optativas
-├── Segundo_Parcial/              # Evaluación 25%
-│   └── Tareas/
-│       ├── Tarea_1/              # 10%
-│       ├── Tarea_2/              # 10%
-│       └── Tarea_3/              # 10%
-├── Proyecto/                     # Evaluación 20%
+│   └── Tareas/                   # Tareas optativas (0, 0.1)
+├── Tareas/                       # Tareas del curso 30% total
+│   ├── Tarea_1/                  # 10%
+│   ├── Tarea_2/                  # 10%
+│   └── Tarea_3/                  # 10%
+├── Proyecto/                     # Proyecto Final 20%
 │   ├── documento_escrito/        # 10%
 │   └── video/                    # 10%
 ├── requirements.txt
 ├── CLAUDE.md
+├── ESTRUCTURA_PROYECTO.md
 └── README.md
+
+Nota: Segundo Parcial (25%) pendiente de agregar.
 ```
 
 ### Estructura Primer Parcial (Actual)
