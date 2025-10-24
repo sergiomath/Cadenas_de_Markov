@@ -84,6 +84,10 @@ pip install cupy-cuda11x  # CUDA 11.x
 ### Ejemplo Básico
 
 ```python
+# Agregar ruta del Primer Parcial al path
+import sys
+sys.path.append('Primer_Parcial')
+
 from src.markov_matrix import crear_matriz_probabilidad, calcular_distribucion_metodo_autovalores
 
 # Crear matriz de transición
@@ -153,16 +157,26 @@ print(recomendacion)
 
 ```
 Cadenas_de_Markov/
-├── src/
-│   ├── __init__.py
-│   └── markov_matrix.py          # Implementaciones CPU/GPU
-├── notebooks/
-│   ├── metodo_vectores_propios.ipynb
-│   ├── metodo_sistema.ipynb
-│   └── metodo_gpu_final.ipynb
-├── resultados/                   # Datos de benchmarks
-├── docs/
-│   └── Descripcion tarea 0 (1).pdf
+├── Primer_Parcial/               # Trabajo del Primer Parcial (25%)
+│   ├── src/
+│   │   ├── __init__.py
+│   │   └── markov_matrix.py      # Implementaciones CPU/GPU
+│   ├── notebooks/
+│   │   ├── metodo_vectores_propios.ipynb
+│   │   ├── metodo_sistema.ipynb
+│   │   └── metodo_gpu_final.ipynb
+│   ├── resultados/               # Datos de benchmarks
+│   ├── docs/
+│   │   └── Descripcion tarea 0 (1).pdf
+│   └── Tareas/                   # Tareas optativas
+├── Segundo_Parcial/              # Trabajo del Segundo Parcial (25%)
+│   └── Tareas/
+│       ├── Tarea_1/              # 10%
+│       ├── Tarea_2/              # 10%
+│       └── Tarea_3/              # 10%
+├── Proyecto/                     # Proyecto Final (20%)
+│   ├── documento_escrito/        # 10%
+│   └── video/                    # 10%
 ├── requirements.txt
 ├── CLAUDE.md
 └── README.md

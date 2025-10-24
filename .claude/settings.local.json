@@ -12,7 +12,12 @@
       "Bash(python3:*)",
       "Bash(python test_notebooks.py:*)",
       "Bash(python:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Read(//mnt/c/Users/sergi/OneDrive/**)",
+      "Bash(cd:*)",
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

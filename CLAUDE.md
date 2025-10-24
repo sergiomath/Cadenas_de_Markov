@@ -6,25 +6,48 @@ Documentación técnica para Claude Code trabajando en este proyecto.
 
 Proyecto Python para análisis comparativo de métodos de cálculo de distribuciones estacionarias en cadenas de Markov.
 
-### Estructura de Archivos
+### Estructura General del Proyecto
 
-- **`src/markov_matrix.py`**: Módulo principal con implementaciones CPU/GPU
+```
+Cadenas_de_Markov/
+├── Primer_Parcial/               # Evaluación 25%
+│   ├── src/                      # Código fuente
+│   ├── notebooks/                # Análisis y benchmarks
+│   ├── resultados/               # Datos experimentales
+│   ├── docs/                     # Descripción original
+│   └── Tareas/                   # Tareas optativas
+├── Segundo_Parcial/              # Evaluación 25%
+│   └── Tareas/
+│       ├── Tarea_1/              # 10%
+│       ├── Tarea_2/              # 10%
+│       └── Tarea_3/              # 10%
+├── Proyecto/                     # Evaluación 20%
+│   ├── documento_escrito/        # 10%
+│   └── video/                    # 10%
+├── requirements.txt
+├── CLAUDE.md
+└── README.md
+```
+
+### Estructura Primer Parcial (Actual)
+
+- **`Primer_Parcial/src/markov_matrix.py`**: Módulo principal con implementaciones CPU/GPU
   - `crear_matriz_probabilidad(n, p)`: Crea matriz de transición
   - `calcular_distribucion_metodo_autovalores(matriz)`: Método 1 (Vectores propios)
   - `calcular_distribucion_metodo_tiempo_retorno(matriz)`: Método 2 (Tiempos de retorno)
   - `calcular_distribucion_metodo_autovalores_gpu(matriz)`: Método 1 GPU
   - `calcular_distribucion_metodo_tiempo_retorno_gpu(matriz)`: Método 2 GPU
 
-- **`src/__init__.py`**: Exporta funciones principales
+- **`Primer_Parcial/src/__init__.py`**: Exporta funciones principales
 
-- **`notebooks/`**: Análisis de rendimiento y benchmarks
+- **`Primer_Parcial/notebooks/`**: Análisis de rendimiento y benchmarks
   - `metodo_vectores_propios.ipynb`: Benchmark Método 1
   - `metodo_sistema.ipynb`: Benchmark Método 2
   - `metodo_gpu_final.ipynb`: Comparación GPU vs CPU
 
-- **`resultados/`**: CSVs con datos de benchmarks
+- **`Primer_Parcial/resultados/`**: CSVs con datos de benchmarks
 
-- **`docs/`**: Documento con descripción de la tarea original
+- **`Primer_Parcial/docs/`**: Documento con descripción de la tarea original
 
 ## Lógica del Modelo
 
@@ -52,17 +75,26 @@ pip install cupy-cuda11x  # CUDA 11.x
 
 ### Ejecución
 ```bash
-# Notebooks
-jupyter notebook notebooks/
+# Notebooks (desde raíz del proyecto)
+jupyter notebook Primer_Parcial/notebooks/
 
-# Tests
-python -c "from src.markov_matrix import *; P = crear_matriz_probabilidad(5, 0.7); print(calcular_distribucion_metodo_autovalores(P))"
+# Tests (desde raíz del proyecto)
+cd Primer_Parcial && python -c "from src.markov_matrix import *; P = crear_matriz_probabilidad(5, 0.7); print(calcular_distribucion_metodo_autovalores(P))"
 ```
 
 ### Patrón de Importación
+
+**Desde notebooks en Primer_Parcial/notebooks/:**
 ```python
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from src.markov_matrix import *
+```
+
+**Desde raíz del proyecto:**
+```python
+import sys
+sys.path.append('Primer_Parcial')
 from src.markov_matrix import *
 ```
 
