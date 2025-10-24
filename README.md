@@ -1,7 +1,8 @@
 # Análisis Computacional de Cadenas de Markov
 
 **Universidad Nacional de Colombia**
-**Autor:** Sergio Andrés Díaz Vera
+**Autor:** Sergio Andrés Díaz Vera , Mateo 
+		
 
 ## Descripción del Problema
 
