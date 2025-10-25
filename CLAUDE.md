@@ -23,7 +23,10 @@ Cadenas_de_Markov/
 ├── Proyecto/                     # Proyecto Final 20%
 │   ├── documento_escrito/        # 10%
 │   └── video/                    # 10%
-├── requirements.txt
+├── .venv/                        # Entorno virtual (UV)
+├── pyproject.toml                # Configuración UV y dependencias
+├── uv.lock                       # Lockfile de UV (auto-generado)
+├── requirements.txt              # Dependencias (legacy)
 ├── CLAUDE.md
 ├── ESTRUCTURA_PROYECTO.md
 └── README.md
@@ -67,6 +70,20 @@ Nota: Segundo Parcial (25%) pendiente de agregar.
 ## Comandos de Desarrollo
 
 ### Instalación
+
+**Método Principal (UV - Recomendado):**
+```bash
+# Instalar UV
+curl -LsSf https://astral.sh/uv/install.sh | sh  # Linux/macOS
+pip install uv  # Alternativa multiplataforma
+
+# Instalar dependencias
+uv sync                  # Dependencias básicas
+uv sync --extra gpu      # Con soporte GPU (CUDA 12.x)
+uv sync --extra gpu-cuda11  # Con soporte GPU (CUDA 11.x)
+```
+
+**Método Legacy (pip):**
 ```bash
 pip install -r requirements.txt
 
@@ -76,12 +93,43 @@ pip install cupy-cuda11x  # CUDA 11.x
 ```
 
 ### Ejecución
+
+**Con UV:**
+```bash
+# Notebooks (desde raíz del proyecto)
+uv run jupyter notebook Primer_Parcial/notebooks/
+
+# Tests
+uv run python -c "import sys; sys.path.append('Primer_Parcial'); from src.markov_matrix import *; P = crear_matriz_probabilidad(5, 0.7); print(calcular_distribucion_metodo_autovalores(P))"
+
+# Activar entorno virtual manualmente
+source .venv/bin/activate  # Linux/macOS
+.venv\Scripts\activate     # Windows
+```
+
+**Legacy:**
 ```bash
 # Notebooks (desde raíz del proyecto)
 jupyter notebook Primer_Parcial/notebooks/
 
 # Tests (desde raíz del proyecto)
 cd Primer_Parcial && python -c "from src.markov_matrix import *; P = crear_matriz_probabilidad(5, 0.7); print(calcular_distribucion_metodo_autovalores(P))"
+```
+
+### Gestión de Dependencias con UV
+
+```bash
+# Agregar nuevas dependencias
+uv add nombre_paquete
+
+# Actualizar dependencias
+uv sync --upgrade
+
+# Ver dependencias instaladas
+uv pip list
+
+# Limpiar caché
+uv cache clean
 ```
 
 ### Patrón de Importación

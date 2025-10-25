@@ -65,22 +65,69 @@ Estado n-1:  P(n-1→n-1)=p, P(n-1→n-2)=1-p
 
 ## Instalación
 
-### Requisitos Básicos
+Este proyecto utiliza [UV](https://docs.astral.sh/uv/) como manejador de paquetes moderno y rápido.
+
+### Instalar UV
+
 ```bash
-pip install -r requirements.txt
+# Linux/macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Alternativamente con pip
+pip install uv
 ```
 
-### Aceleración GPU (Opcional)
-```bash
-# Verificar CUDA
-nvidia-smi
+### Instalación de Dependencias
 
-# Instalar CuPy según versión CUDA
+```bash
+# Instalar dependencias básicas
+uv sync
+
+# Instalar con soporte GPU (CUDA 12.x)
+uv sync --extra gpu
+
+# Instalar con soporte GPU (CUDA 11.x)
+uv sync --extra gpu-cuda11
+```
+
+### Verificar GPU (Opcional)
+```bash
+nvidia-smi
+```
+
+### Instalación Legacy (sin UV)
+
+Si prefieres usar pip tradicional:
+
+```bash
+pip install -r requirements.txt
+
+# GPU opcional
 pip install cupy-cuda12x  # CUDA 12.x
 pip install cupy-cuda11x  # CUDA 11.x
 ```
 
 ## Uso
+
+### Activar Entorno Virtual
+
+```bash
+# UV crea automáticamente un entorno virtual en .venv/
+# Activarlo manualmente si es necesario:
+
+# Linux/macOS
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+
+# O usar uv run para ejecutar comandos directamente
+uv run python script.py
+uv run jupyter notebook
+```
 
 ### Ejemplo Básico
 
@@ -187,6 +234,17 @@ Nota: El Segundo Parcial (25%) será agregado cuando esté disponible.
 
 ## Notebooks de Análisis
 
+Los notebooks se ejecutan con:
+
+```bash
+# Usando UV
+uv run jupyter notebook Primer_Parcial/notebooks/
+
+# O activando el entorno virtual
+source .venv/bin/activate  # Linux/macOS
+jupyter notebook Primer_Parcial/notebooks/
+```
+
 ### 1. metodo_vectores_propios.ipynb
 Benchmark completo del Método 1 (Vectores Propios) variando n y p.
 
@@ -198,7 +256,11 @@ Comparación GPU vs CPU para ambos métodos con análisis de speedup.
 
 ## Validación de Instalación
 
-```python
+```bash
+# Ejecutar validación con UV
+uv run python -c "
+import sys
+sys.path.append('Primer_Parcial')
 from src.markov_matrix import *
 
 # Test matriz pequeña
@@ -218,9 +280,10 @@ assert abs(pi2.sum() - 1.0) < 1e-10
 if GPU_AVAILABLE:
     pi1_gpu = calcular_distribucion_metodo_autovalores_gpu(P)
     assert abs(pi1_gpu.sum() - 1.0) < 1e-10
-    print("✅ GPU funcional")
+    print('✅ GPU funcional')
 
-print("✅ Todos los tests pasaron")
+print('✅ Todos los tests pasaron')
+"
 ```
 
 ## Referencias
@@ -229,12 +292,38 @@ print("✅ Todos los tests pasaron")
 2. Levin, D.A., Peres, Y. (2017). *Markov Chains and Mixing Times*. AMS.
 3. Stewart, W.J. (2009). *Probability, Markov Chains, Queues, and Simulation*. Princeton UP.
 
+## Comandos Útiles con UV
+
+```bash
+# Instalar nuevas dependencias
+uv add numpy pandas
+
+# Actualizar dependencias
+uv sync --upgrade
+
+# Ver dependencias instaladas
+uv pip list
+
+# Limpiar caché
+uv cache clean
+
+# Ejecutar scripts Python
+uv run python mi_script.py
+
+# Ejecutar Jupyter
+uv run jupyter notebook
+
+# Ver información del proyecto
+uv tree
+```
+
 ## Recomendaciones de Uso
 
 1. **Usar Método 1 por defecto** - Superior en 95% de casos
 2. **Activar GPU solo si n>50** - Overhead no justifica en matrices pequeñas
 3. **Evitar Método 2 para n>200** - Escalabilidad pobre (O(n⁴))
 4. **Validar resultados** - Verificar Σπᵢ = 1 siempre
+5. **Usar UV para gestión de dependencias** - Más rápido y confiable que pip
 
 ## Licencia
 

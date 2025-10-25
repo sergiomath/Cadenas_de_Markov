@@ -18,7 +18,9 @@
       "Bash(mkdir:*)",
       "Bash(tree:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run python:*)"
     ],
     "deny": [],
     "ask": []
