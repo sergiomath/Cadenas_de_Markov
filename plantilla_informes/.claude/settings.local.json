@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(xargs:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(pdflatex:*)",
+      "Bash(zip:*)",
+      "Bash(bibtex:*)",
+      "Bash(find:*)",
+      "Bash(/dev/null)",
+      "Bash(ls:*)",
+      "Bash(pdfinfo:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

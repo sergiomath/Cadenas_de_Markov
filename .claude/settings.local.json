@@ -20,7 +20,15 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(uv sync:*)",
-      "Bash(uv run python:*)"
+      "Bash(uv run python:*)",
+      "Bash(uv venv:*)",
+      "Bash(pdflatex:*)",
+      "Bash(/dev/null)",
+      "Bash(ls:*)",
+      "Bash(for f in *.py)",
+      "Bash(do echo \"Verificando $f...\")",
+      "Bash(echo:*)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

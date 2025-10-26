@@ -1,0 +1,74 @@
+% Informe Tarea 1 - Cadenas de Markov y Aplicaciones
+
+\documentclass[
+	spanish,
+	letterpaper, oneside
+]{article}
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\documenttitle {Aplicación del muestreo de Gibbs a los modelos Hard-Core y q-coloraciones}
+\def\documentsubtitle {Tarea 1}
+\def\documentsubject {Muestreo de Gibbs en Modelos Estocásticos en Rejillas}
+
+\def\documentauthor {Sergio Andrés Díaz Vera, Julián Mateo Espinosa Ospina}
+\def\coursename {Cadenas de Markov y Aplicaciones}
+\def\coursecode {2025-II}
+
+\def\universityname {Universidad Nacional de Colombia}
+\def\universityfaculty {Facultad de Ciencias}
+\def\universitydepartment {Departamento de Matemáticas}
+\def\universitydepartmentimage {departamentos/unal}
+\def\universitydepartmentimagecfg {height=1.57cm}
+\def\universitylocation {Bogotá D.C., Colombia}
+
+% INTEGRANTES, PROFESORES Y FECHAS
+\def\authortable {
+	\begin{tabular}{ll}
+		Estudiantes:
+		& \begin{tabular}[t]{l}
+			Sergio Andrés Díaz Vera \\
+			seadiazve@unal.edu.co \\
+			\\
+			Julián Mateo Espinosa Ospina \\
+			juespinosao@unal.edu.co
+		\end{tabular} \\
+		& \\
+		Profesor:
+		& \begin{tabular}[t]{l}
+			Freddy Hernández-Romero
+		\end{tabular} \\
+		& \\
+		\multicolumn{2}{l}{Fecha de entrega: 30 de octubre de 2025} \\
+		\multicolumn{2}{l}{\universitylocation}
+	\end{tabular}
+}
+
+% IMPORTACIÓN DEL TEMPLATE
+\input{plantilla_src/template}
+
+% INICIO DE PÁGINAS
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+% RESUMEN
+\begin{abstractd}
+Este informe presenta la implementación y análisis de algoritmos de muestreo de Gibbs para dos modelos estocásticos en rejillas: el modelo Hard-Core y el modelo de q-coloraciones. Se desarrollaron implementaciones computacionales eficientes que permiten generar muestras de distribuciones uniformes sobre configuraciones factibles. Los resultados demuestran convergencia efectiva del algoritmo para rejillas de tamaño $K \times K$ con $3 \leq K \leq 20$ y $2 \leq q \leq 10$, caracterizando propiedades estadísticas de las distribuciones estacionarias mediante análisis cuantitativo riguroso.
+\end{abstractd}
+
+% TABLA DE CONTENIDOS
+\templateIndex
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+\input{plantilla_src/etc/contenido}
+
+% FIN DEL DOCUMENTO
+\end{document}
