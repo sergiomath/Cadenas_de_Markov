@@ -1,0 +1,177 @@
+% Informe - Universidad Nacional de Colombia
+% Plantilla vacía lista para usar
+
+\documentclass[
+	spanish,
+	letterpaper, oneside
+]{article}
+
+% ==================== INFORMACIÓN DEL DOCUMENTO ====================
+% MODIFICAR ESTOS VALORES SEGÚN TU TAREA/PROYECTO
+
+\def\documenttitle {Título del Trabajo}
+\def\documentsubtitle {Subtítulo o Número de Tarea}
+\def\documentsubject {Tema General del Documento}
+
+\def\documentauthor {Nombre Estudiante 1, Nombre Estudiante 2}
+\def\coursename {Nombre del Curso}
+\def\coursecode {Código - Semestre}
+
+\def\universityname {Universidad Nacional de Colombia}
+\def\universityfaculty {Facultad de Ciencias}
+\def\universitydepartment {Departamento de Matemáticas}
+\def\universitydepartmentimage {departamentos/unal}
+\def\universitydepartmentimagecfg {height=1.57cm}
+\def\universitylocation {Bogotá D.C., Colombia}
+
+% ==================== INTEGRANTES Y FECHAS ====================
+\def\authortable {
+	\begin{tabular}{ll}
+		Estudiantes:
+		& \begin{tabular}[t]{l}
+			Nombre Completo Estudiante 1 \\
+			correo1@unal.edu.co \\
+			\\
+			Nombre Completo Estudiante 2 \\
+			correo2@unal.edu.co
+		\end{tabular} \\
+		& \\
+		Profesor:
+		& \begin{tabular}[t]{l}
+			Nombre del Profesor
+		\end{tabular} \\
+		& \\
+		\multicolumn{2}{l}{Fecha de entrega: DD de mes de YYYY} \\
+		\multicolumn{2}{l}{\universitylocation}
+	\end{tabular}
+}
+
+% ==================== IMPORTACIÓN DEL TEMPLATE ====================
+\input{plantilla_src/template}
+
+% ==================== INICIO DE PÁGINAS ====================
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+% RESUMEN/ABSTRACT
+\begin{abstractd}
+Escribe aquí el resumen de tu trabajo. Este debe ser un párrafo conciso que describa el objetivo, metodología y principales resultados del documento. Generalmente entre 150-250 palabras.
+\end{abstractd}
+
+% TABLA DE CONTENIDOS
+\templateIndex
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ==================== CONTENIDO DEL DOCUMENTO ====================
+
+\section{Introducción}
+
+Escribe aquí la introducción de tu documento. La introducción debe contextualizar el problema, presentar los objetivos y describir la estructura del documento.
+
+\subsection{Contexto}
+
+Desarrollo del contexto...
+
+\subsection{Objetivos}
+
+\begin{itemize}
+    \item Objetivo 1
+    \item Objetivo 2
+    \item Objetivo 3
+\end{itemize}
+
+\section{Marco Teórico}
+
+Presenta aquí los conceptos teóricos necesarios para entender tu trabajo.
+
+\subsection{Conceptos Fundamentales}
+
+Desarrollo de conceptos...
+
+\begin{defn}[Nombre de la Definición]
+Enunciado de la definición...
+\end{defn}
+
+\begin{teo}[Nombre del Teorema]
+Enunciado del teorema...
+\end{teo}
+
+\section{Metodología}
+
+Describe la metodología utilizada en tu trabajo.
+
+\subsection{Implementación}
+
+Detalles de implementación...
+
+\section{Resultados}
+
+Presenta los resultados obtenidos.
+
+\subsection{Análisis de Resultados}
+
+Análisis detallado...
+
+% Ejemplo de tabla
+\begin{table}[htbp]
+\centering
+\caption{Título de la tabla}
+\label{tab:ejemplo}
+\begin{tabular}{|c|c|c|}
+\hline
+Columna 1 & Columna 2 & Columna 3 \\
+\hline
+Dato 1 & Dato 2 & Dato 3 \\
+Dato 4 & Dato 5 & Dato 6 \\
+\hline
+\end{tabular}
+\end{table}
+
+% Ejemplo de figura
+% \insertimage[\label{fig:ejemplo}]{ruta/imagen.png}{width=12cm}{Descripción de la figura}
+
+\section{Conclusiones}
+
+Resume las conclusiones principales del trabajo.
+
+\begin{enumerate}
+    \item Primera conclusión
+    \item Segunda conclusión
+    \item Tercera conclusión
+\end{enumerate}
+
+\subsection{Trabajo Futuro}
+
+Posibles extensiones del trabajo...
+
+% ==================== REFERENCIAS ====================
+\section{Referencias}
+
+\begin{thebibliography}{9}
+\bibitem{ref1}
+Autor, A. (Año). \textit{Título del libro o artículo}. Editorial o Journal.
+
+\bibitem{ref2}
+Autor, B., Autor, C. (Año). Título del artículo. \textit{Nombre de la Revista}, Volumen(Número), páginas.
+
+\end{thebibliography}
+
+% ==================== APÉNDICES (OPCIONAL) ====================
+% \newpage
+% \appendix
+%
+% \section{Código Fuente}
+% Código adicional...
+%
+% \section{Resultados Adicionales}
+% Datos complementarios...
+
+% ==================== FIN DEL DOCUMENTO ====================
+\end{document}

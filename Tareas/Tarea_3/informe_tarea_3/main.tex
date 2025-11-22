@@ -1,0 +1,74 @@
+% Informe Tarea 3 - Cadenas de Markov y Aplicaciones
+
+\documentclass[
+	spanish,
+	letterpaper, oneside
+]{article}
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\documenttitle {Muestreo MCMC vs Simulación Perfecta}
+\def\documentsubtitle {Tarea 3 - Modelo de Ising}
+\def\documentsubject {Comparación de Métodos de Muestreo en Modelos de Spin}
+
+\def\documentauthor {Sergio Andrés Díaz Vera, Julián Mateo Espinosa Ospina}
+\def\coursename {Cadenas de Markov y Aplicaciones}
+\def\coursecode {2025-II}
+
+\def\universityname {Universidad Nacional de Colombia}
+\def\universityfaculty {Facultad de Ciencias}
+\def\universitydepartment {Departamento de Matemáticas}
+\def\universitydepartmentimage {departamentos/unal}
+\def\universitydepartmentimagecfg {height=1.57cm}
+\def\universitylocation {Bogotá D.C., Colombia}
+
+% INTEGRANTES, PROFESORES Y FECHAS
+\def\authortable {
+	\begin{tabular}{ll}
+		Estudiantes:
+		& \begin{tabular}[t]{l}
+			Sergio Andrés Díaz Vera \\
+			seadiazve@unal.edu.co \\
+			\\
+			Julián Mateo Espinosa Ospina \\
+			juespinosao@unal.edu.co
+		\end{tabular} \\
+		& \\
+		Profesor:
+		& \begin{tabular}[t]{l}
+			Freddy Hernández-Romero
+		\end{tabular} \\
+		& \\
+		\multicolumn{2}{l}{Fecha de entrega: Diciembre de 2025} \\
+		\multicolumn{2}{l}{\universitylocation}
+	\end{tabular}
+}
+
+% IMPORTACIÓN DEL TEMPLATE
+\input{plantilla_src/template}
+
+% INICIO DE PÁGINAS
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+% RESUMEN
+\begin{abstractd}
+Este informe presenta una comparación rigurosa entre dos metodologías de muestreo aplicadas al modelo de Ising: el muestreo tradicional mediante Cadenas de Markov Monte Carlo (MCMC) y la simulación perfecta a través del algoritmo de Propp-Wilson (Coupling From The Past). Se implementó el modelo de Ising en una rejilla $12 \times 12$ para el rango completo de temperaturas inversas $\beta \in \{0, 0.1, 0.2, \ldots, 0.9, 1.0\}$, generando 100 muestras con cada método según los requisitos del curso. Los resultados evidencian que, si bien ambas técnicas producen estimaciones consistentes de la magnetización esperada $\mathbb{E}[M(\eta)]$, la simulación perfecta garantiza muestras exactas de la distribución estacionaria sin sesgo de inicialización, a costa de mayor complejidad computacional. Se observa un incremento exponencial en el tiempo de coalescencia conforme $\beta$ aumenta, desde 1 paso para $\beta = 0$ hasta casi 900,000 pasos en promedio para $\beta = 1.0$, reflejando la mayor dificultad de acoplamiento en el régimen de baja temperatura. El análisis demuestra la transición de fase característica del modelo de Ising alrededor de $\beta \approx 0.44$, consistente con la teoría para redes bidimensionales.
+\end{abstractd}
+
+% TABLA DE CONTENIDOS
+\templateIndex
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+\input{plantilla_src/etc/contenido_tarea3}
+
+% FIN DEL DOCUMENTO
+\end{document}

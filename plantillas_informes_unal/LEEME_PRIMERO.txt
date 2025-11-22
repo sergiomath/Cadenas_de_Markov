@@ -1,0 +1,54 @@
+================================================================================
+  PLANTILLA DE INFORMES - UNIVERSIDAD NACIONAL DE COLOMBIA
+  Departamento de Matemáticas
+================================================================================
+
+¡Bienvenido a la plantilla profesional de informes LaTeX!
+
+INICIO RÁPIDO:
+--------------
+1. Lee INDEX.md para una visión general
+2. Abre GUIA_RAPIDA.md para empezar a usar la plantilla
+3. Copia plantilla_vacia.tex para tu nuevo documento
+
+ARCHIVOS CLAVE:
+---------------
+📘 INDEX.md           - Punto de entrada principal
+📗 GUIA_RAPIDA.md     - Guía de uso rápido
+📕 README.md          - Documentación completa
+📙 CONTENIDO.md       - Índice de archivos
+
+📄 plantilla_vacia.tex    - Tu punto de partida
+📄 main.tex               - Ejemplo completo
+📊 Tarea2_Informe_Final.pdf - Documento de ejemplo compilado
+
+⚙️ compilar.sh        - Script de compilación
+
+ESTRUCTURA:
+-----------
+plantillas_informes_unal/
+├── Documentación (4 archivos .md)
+├── Plantillas LaTeX (2 archivos .tex)
+├── Ejemplos compilados (2 PDFs)
+├── Script de utilidad (compilar.sh)
+├── img/ (logos e imágenes)
+└── plantilla_src/ (~50 archivos de plantilla)
+
+PRIMER PASO:
+------------
+$ cp plantilla_vacia.tex mi_primer_informe.tex
+$ nano mi_primer_informe.tex  # Edita tu información
+$ ./compilar.sh mi_primer_informe.tex
+
+AYUDA:
+------
+- Primera vez con LaTeX? → Lee GUIA_RAPIDA.md
+- Quieres personalizar? → Lee README.md
+- Errores al compilar? → Consulta GUIA_RAPIDA.md sección "Problemas"
+
+================================================================================
+Creado: Noviembre 2025
+Tamaño total: 2.3 MB
+Archivos totales: 69
+Licencia: MIT
+================================================================================

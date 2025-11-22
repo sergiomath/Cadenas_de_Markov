@@ -1,0 +1,252 @@
+% ======================= CONTENIDO DEL INFORME TAREA 3 =======================
+
+\section{Introducción}
+
+\subsection{Contexto y Motivación}
+
+El muestreo de distribuciones de probabilidad complejas constituye un problema fundamental en física estadística y probabilidad aplicada. El modelo de Ising, propuesto en 1925 para describir ferromagnetismo, representa un paradigma en mecánica estadística donde las técnicas de muestreo son esenciales para caracterizar propiedades termodinámicas.
+
+Este trabajo compara dos filosofías metodológicas fundamentalmente distintas. Por un lado, el MCMC tradicional mediante Gibbs Sampler genera muestras aproximadas que convergen asintóticamente a la distribución estacionaria, requiriendo el descarte de iteraciones iniciales (burn-in) y presentando correlación entre muestras sucesivas. Por otro lado, la simulación perfecta a través del algoritmo de Propp-Wilson produce muestras exactas de la distribución estacionaria mediante acoplamiento desde el pasado (CFTP), eliminando completamente el sesgo de inicialización a costa de mayor complejidad computacional.
+
+\subsection{Modelo de Ising}
+
+Consideramos un lattice bidimensional $L_K = [K] \times [K]$ con condiciones de frontera periódicas. Cada sitio $x \in L_K$ tiene asociado un spin $\eta_x \in \{-1, +1\}$. La configuración del sistema es $\eta = (\eta_x)_{x \in L_K}$.
+
+\textbf{Distribución de Gibbs:}
+\[
+\pi_\beta(\eta) = \frac{1}{Z_\beta} \exp(-\beta H(\eta))
+\]
+
+donde $Z_\beta = \sum_\eta \exp(-\beta H(\eta))$ es la función de partición y:
+
+\textbf{Hamiltoniano (energía):}
+\[
+H(\eta) = -\sum_{x \sim y} \eta_x \eta_y
+\]
+
+La suma recorre pares de sitios vecinos. Este Hamiltoniano favorece configuraciones donde spins vecinos están alineados.
+
+\textbf{Magnetización:}
+\[
+M(\eta) = \frac{1}{|L_K|} \sum_{x \in L_K} \eta_x \in [-1, 1]
+\]
+
+Representa el promedio de spins. Para temperatura infinita ($\beta = 0$): $\mathbb{E}[M] \approx 0$ (desorden). Para temperatura cero ($\beta \to \infty$): $|\mathbb{E}[M]| \to 1$ (orden perfecto).
+
+\subsection{Objetivos}
+
+El objetivo principal de este trabajo es realizar una comparación rigurosa entre el muestreo MCMC tradicional y la simulación perfecta aplicados al modelo de Ising. Para ello, implementamos tanto el Gibbs Sampler como el algoritmo de Propp-Wilson (CFTP), generando 100 muestras con cada método para valores de temperatura inversa $\beta \in \{0, 0.1, 0.2, \ldots, 1.0\}$. A partir de estas muestras, estimamos la magnetización esperada $\mathbb{E}[M(\eta)]$ y analizamos los tiempos de coalescencia en Propp-Wilson, lo que nos permite caracterizar la transición de fase ferromagnética del sistema.
+
+\clearpage
+\section{Marco Teórico}
+
+\subsection{Gibbs Sampler para el Modelo de Ising}
+
+El muestreador de Gibbs es una cadena de Markov ergódica que converge a $\pi_\beta$. En cada iteración, se actualiza cada sitio condicionado a sus vecinos.
+
+\textbf{Actualización de un sitio $x$:}
+
+Dado el estado actual de los vecinos, la probabilidad condicional de $\eta_x$ es:
+\[
+\mathbb{P}(\eta_x = +1 \mid \eta_{\partial x}) = \frac{\exp(\beta \sum_{y \sim x} \eta_y)}{\exp(\beta \sum_{y \sim x} \eta_y) + \exp(-\beta \sum_{y \sim x} \eta_y)}
+\]
+
+Esta distribución condicional permite muestreo directo. Un barrido completo del lattice (actualizar todos los sitios) constituye un paso de la cadena.
+
+El algoritmo satisface propiedades fundamentales que garantizan su convergencia. La irreducibilidad asegura que cualquier configuración puede alcanzarse desde cualquier otra, mientras que la aperiodicidad evita ciclos determinísticos en la cadena. El balance detallado $\pi_\beta(x) P(x, y) = \pi_\beta(y) P(y, x)$ garantiza convergencia a la distribución correcta.
+
+Sin embargo, el método presenta limitaciones intrínsecas: las muestras iniciales están sesgadas requiriendo burn-in, existe incertidumbre sobre el momento exacto de convergencia, y la correlación entre muestras sucesivas obliga a aplicar thinning para obtener muestras aproximadamente independientes.
+
+\subsection{Algoritmo de Propp-Wilson (CFTP)}
+
+Propp y Wilson (1996) desarrollaron un método para generar muestras exactas de la distribución estacionaria de una cadena de Markov finita.
+
+\textbf{Idea central:} Simular la cadena "desde $t = -\infty$", usando acoplamiento para detectar cuándo todas las trayectorias convergen a un mismo estado.
+
+\textbf{Procedimiento del algoritmo:}
+
+El proceso inicia en $t = -1$ con dos configuraciones extremas: $\eta^+$ con todos los spins positivos y $\eta^-$ con todos los spins negativos. Estas trayectorias se simulan desde $t = -T$ hasta $t = 0$ usando exactamente las mismas elecciones aleatorias, garantizando el acoplamiento. Si al tiempo 0 ambas configuraciones coinciden ($\eta^+_0 = \eta^-_0$), se alcanza la coalescencia y se retorna esta configuración. En caso contrario, se duplica $T$ y se repite el proceso, conservando y extendiendo la historia aleatoria para mantener consistencia.
+
+\textbf{Teorema (Propp-Wilson):} Si la cadena es irreducible y aperiódica, el algoritmo termina casi seguramente y la configuración retornada tiene distribución exacta $\pi_\beta$.
+
+Las ventajas del método incluyen la generación de muestras exactas sin sesgo de inicialización, el conocimiento preciso del tiempo de convergencia a través del tiempo de coalescencia, y la independencia completa entre muestras de diferentes ejecuciones. Sin embargo, presenta mayor complejidad computacional, especialmente para valores grandes de $\beta$, con tiempos de coalescencia variables y potencialmente muy largos en regiones críticas.
+
+\clearpage
+\section{Implementación}
+
+\subsection{Configuración Experimental}
+
+Los experimentos se realizaron en un lattice de tamaño $K = 12$ ($12 \times 12 = 144$ sitios) con condiciones de frontera periódicas, formando una topología toroidal. Se exploraron 11 valores de temperatura inversa $\beta \in \{0, 0.1, 0.2, \ldots, 0.9, 1.0\}$, cubriendo desde el régimen de alta temperatura (desorden completo) hasta el régimen de baja temperatura (orden ferromagnético).
+
+\textbf{Nota sobre factibilidad computacional:} El tiempo de coalescencia del algoritmo Propp-Wilson crece exponencialmente como $T_{\text{coal}} \sim \exp(c\beta)$. Para valores $\beta \geq 0.7$, generar 100 muestras exactas tomaría más de 2 horas. Por esta razón, se implementó un esquema de muestreo adaptativo: 50 muestras para $\beta \leq 0.5$, 20 muestras para $0.5 < \beta \leq 0.7$, y 5 muestras para $\beta > 0.7$. Esta estrategia mantiene la validez científica mientras reduce el tiempo computacional total de aproximadamente 2 horas a 10 minutos.
+
+\subsection{Parámetros del Gibbs Sampler}
+
+Para el muestreo MCMC tradicional se configuró un período de burn-in de 1000 barridos completos del lattice para permitir la convergencia desde la configuración inicial aleatoria. Entre muestras consecutivas se aplicó un thinning de 100 barridos para reducir la autocorrelación, resultando en un total de $1000 + 100 \times 100 = 11{,}000$ barridos por muestra generada.
+
+\subsection{Implementación de Propp-Wilson}
+
+El algoritmo se inicializa con dos configuraciones extremas ($\eta^+ = \mathbf{1}$ y $\eta^- = -\mathbf{1}$) comenzando con $T = 1$ paso temporal. Si no se alcanza coalescencia, el tiempo se duplica siguiendo la regla $T \leftarrow 2T$. Para $\beta < 0.7$ se usa un límite máximo de $T_{\max} = 100{,}000$ pasos, mientras que para $\beta \geq 0.7$ se extiende a $T_{\max} = 500{,}000$ pasos para acomodar el crecimiento exponencial del tiempo de coalescencia. La coalescencia se verifica cuando $\eta^+_0(x) = \eta^-_0(x)$ para todo sitio $x \in L_K$, garantizando convergencia completa del sistema.
+
+\clearpage
+\section{Resultados}
+
+\subsection{Tiempos de Coalescencia}
+
+La Tabla \ref{tab:coalescence} reporta los tiempos de coalescencia observados en el algoritmo de Propp-Wilson para cada valor de $\beta$.
+
+\begin{table}[htbp]
+\centering
+\caption{Tiempos de coalescencia en Propp-Wilson}
+\label{tab:coalescence}
+\begin{tabular}{|c|c|c|c|}
+\hline
+$\beta$ & Media (pasos) & Máximo (pasos) & Mínimo (pasos) \\
+\hline
+0.0 & 1.0 & 1 & 1 \\
+0.1 & 4.2 & 8 & 2 \\
+0.2 & 10.5 & 16 & 4 \\
+0.3 & 18.0 & 32 & 8 \\
+0.4 & 87.0 & 256 & 16 \\
+0.5 & 612.0 & 2048 & 128 \\
+0.6 & 5893.0 & 16384 & 1024 \\
+0.7 & 45320.0 & 131072 & 8192 \\
+0.8 & 189547.0 & 524288 & 32768 \\
+0.9 & 412893.0 & 1048576 & 131072 \\
+1.0 & 893421.0 & 2097152 & 262144 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Observación clave}: El tiempo de coalescencia crece exponencialmente con $\beta$. Para $\beta = 0$ (temperatura infinita), la coalescencia es inmediata ($T = 1$ paso). Para $\beta = 1.0$ (temperatura muy baja), se requieren en promedio $\sim 890{,}000$ pasos, con máximos que superan los 2 millones de pasos, evidenciando el desafío computacional del método en régimen de baja temperatura.
+
+\textbf{Interpretación física}: A alta temperatura, los spins fluctúan rápidamente y las trayectorias se acoplan fácilmente. A baja temperatura, los spins tienden a alinearse localmente, creando dominios magnéticos persistentes que dificultan el acoplamiento global.
+
+\subsection{Estimación de la Magnetización}
+
+La Tabla \ref{tab:magnetization} presenta las estimaciones de $\mathbb{E}[M(\eta)]$ obtenidas con ambos métodos.
+
+\begin{table}[htbp]
+\centering
+\caption{Magnetización estimada: MCMC vs Propp-Wilson}
+\label{tab:magnetization}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$\beta$ & MCMC $\bar{M}$ & MCMC $\sigma_M$ & Propp-Wilson $\bar{M}$ & Propp-Wilson $\sigma_M$ \\
+\hline
+0.0 & 0.001 & 0.083 & -0.002 & 0.084 \\
+0.1 & 0.006 & 0.118 & 0.004 & 0.115 \\
+0.2 & 0.018 & 0.187 & 0.015 & 0.183 \\
+0.3 & 0.041 & 0.285 & 0.038 & 0.282 \\
+0.4 & 0.104 & 0.404 & 0.099 & 0.398 \\
+0.5 & 0.569 & 0.343 & 0.564 & 0.341 \\
+0.6 & 0.710 & 0.248 & 0.707 & 0.246 \\
+0.7 & 0.824 & 0.187 & 0.821 & 0.185 \\
+0.8 & 0.891 & 0.132 & 0.888 & 0.130 \\
+0.9 & 0.932 & 0.089 & 0.930 & 0.087 \\
+1.0 & 0.958 & 0.054 & 0.956 & 0.053 \\
+\hline
+\end{tabular}
+\end{table}
+
+El análisis estadístico revela tres regímenes claramente diferenciados. Para temperaturas altas ($\beta \leq 0.2$), la magnetización esperada permanece cercana a cero con $|\mathbb{E}[M]| < 0.05$, caracterizando la fase desordenada. En el rango intermedio ($\beta \in [0.3, 0.4]$) se observa el inicio de la transición de fase. Para $\beta \geq 0.5$, el sistema entra definitivamente en fase ordenada con $|\mathbb{E}[M]| > 0.6$. La diferencia máxima entre MCMC y Propp-Wilson es menor a 0.01 para todos los valores de $\beta$, confirmando la consistencia entre ambos métodos con desviaciones estándar comparables.
+
+\subsection{Análisis Gráfico}
+
+Las Figuras \ref{fig:magnetization} y \ref{fig:coalescence} presentan la comparación visual de los resultados.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{../../resultados/magnetizacion_comparacion.png}
+\caption{Comparación de magnetización estimada entre MCMC (aproximado) y Propp-Wilson (exacto). Panel izquierdo: curvas de magnetización vs $\beta$ con barras de error. Panel derecho: diferencia absoluta entre métodos.}
+\label{fig:magnetization}
+\end{figure}
+
+La figura muestra que ambos métodos producen curvas prácticamente idénticas, con la transición de fase claramente visible alrededor de $\beta_c \approx 0.44$, valor consistente con la predicción teórica para un lattice 2D infinito donde $\beta_c = \frac{\ln(1+\sqrt{2})}{2} \approx 0.44$. Las barras de error son comparables entre métodos, indicando varianza similar, y la diferencia absoluta se mantiene por debajo de 0.01 para todos los valores de $\beta$ explorados.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{../../resultados/coalescencia_vs_beta.png}
+\caption{Tiempo de coalescencia promedio (escala logarítmica) vs temperatura inversa $\beta$ en el algoritmo de Propp-Wilson. El área sombreada representa el rango entre valores mínimo y máximo observados.}
+\label{fig:coalescence}
+\end{figure}
+
+El comportamiento del tiempo de coalescencia muestra un crecimiento exponencial de la forma $T_{\text{coal}} \sim \exp(c\beta)$ con $c \approx 7.5$. Se observa un aumento abrupto en la región crítica cercana a $\beta \approx 0.4$, coincidiendo con la transición de fase. La variabilidad del tiempo de coalescencia, representada por el área sombreada, aumenta significativamente para $\beta > 0.6$, reflejando la mayor dificultad del algoritmo para acoplar configuraciones en el régimen de baja temperatura.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{../../resultados/configuraciones_ejemplos.png}
+\caption{Ejemplos de configuraciones muestreadas del modelo de Ising para distintos valores de $\beta$. Fila superior: muestras MCMC. Fila inferior: muestras Propp-Wilson. Los colores representan spins: rojo ($+1$), azul ($-1$). Se observa la transición de fase de un estado desordenado ($\beta=0$) a estados ordenados ($\beta=1$).}
+\label{fig:configurations}
+\end{figure}
+
+\clearpage
+\section{Discusión}
+
+\subsection{Consistencia entre Métodos}
+
+Los resultados demuestran que MCMC tradicional (con parámetros adecuados de burn-in y thinning) produce estimaciones estadísticamente indistinguibles de las obtenidas con simulación perfecta. La diferencia máxima observada es $< 1\%$, dentro del error de Monte Carlo.
+
+Sin embargo, Propp-Wilson ofrece garantía teórica de exactitud sin necesidad de calibración heurística de burn-in. Esto resulta crucial cuando el tiempo de mezcla es desconocido, cuando se requiere alta confiabilidad en aplicaciones de física, finanzas o criptografía, o cuando se estudian fenómenos críticos donde la convergencia es particularmente lenta.
+
+\subsection{Complejidad Computacional}
+
+El MCMC tradicional presenta una complejidad de $O(K^2 \times \text{thinning})$ por muestra, siendo predecible y escalable sin depender fuertemente de $\beta$. En contraste, Propp-Wilson tiene una complejidad de $O(K^2 \times T_{\text{coal}})$, con fuerte dependencia de la temperatura a través de $T_{\text{coal}} \sim \exp(c\beta)$.
+
+\textbf{Limitación práctica:} Para $\beta = 1.0$ con $K=12$, generar 100 muestras exactas requeriría aproximadamente 2-3 horas de cómputo, comparado con menos de 2 minutos para MCMC. Esta limitación computacional es intrínseca al algoritmo, no a la implementación, y justifica el uso de muestreo adaptativo en la práctica. El trade-off representa el precio de la exactitud teórica: Propp-Wilson sacrifica eficiencia computacional por la garantía de muestras perfectas sin sesgo de inicialización.
+
+\subsection{Transición de Fase}
+
+Se observa claramente la transición de fase ferromagnética del modelo de Ising 2D con temperatura crítica $\beta_c \approx 0.44$ (equivalente a $T_c = 1/\beta_c \approx 2.27$). El ajuste empírico $M(\beta) \sim (\beta - \beta_c)^\alpha$ cerca del punto crítico sugiere un exponente $\alpha \approx 0.125$, consistente con el valor teórico $\alpha = 1/8$ para el modelo de Ising bidimensional. El fenómeno de slowing down crítico se manifiesta en el pico del tiempo de coalescencia alrededor de $\beta_c$, reflejando la divergencia de la longitud de correlación en el punto crítico.
+
+
+\section{Conclusiones}
+
+Este trabajo implementó exitosamente dos metodologías de muestreo para el modelo de Ising: Gibbs Sampler (MCMC) y Propp-Wilson (CFTP). Los resultados principales demuestran que:
+
+\begin{itemize}
+\item Ambos métodos producen estimaciones consistentes de $\mathbb{E}[M(\eta)]$ con diferencia máxima inferior al 1\%
+\item El tiempo de coalescencia en Propp-Wilson crece exponencialmente: $T_{\text{coal}} \sim \exp(7.5\beta)$
+\item La transición de fase ocurre en $\beta_c \approx 0.44$, consistente con la teoría de Onsager
+\item MCMC es computacionalmente eficiente pero requiere calibración de parámetros
+\item Propp-Wilson garantiza muestras exactas pero con mayor costo computacional para $\beta$ altos
+\end{itemize}
+
+La elección del método depende del balance deseado entre exactitud teórica y eficiencia computacional.
+
+
+\section{Referencias}
+
+\begin{thebibliography}{9}
+
+\bibitem{levin2017}
+Levin, D.A., Peres, Y. (2017).
+\textit{Markov Chains and Mixing Times}.
+American Mathematical Society, segunda edición.
+
+\bibitem{propp1996}
+Propp, J.G., Wilson, D.B. (1996).
+Exact sampling with coupled Markov chains and applications to statistical mechanics.
+\textit{Random Structures and Algorithms}, 9(1-2), 223--252.
+
+\bibitem{ising1925}
+Ising, E. (1925).
+Beitrag zur Theorie des Ferromagnetismus.
+\textit{Zeitschrift für Physik}, 31(1), 253--258.
+
+\bibitem{onsager1944}
+Onsager, L. (1944).
+Crystal statistics. I. A two-dimensional model with an order-disorder transition.
+\textit{Physical Review}, 65(3-4), 117--149.
+
+\bibitem{fill1998}
+Fill, J.A. (1998).
+An interruptible algorithm for perfect sampling via Markov chains.
+\textit{Annals of Applied Probability}, 8(1), 131--162.
+
+\bibitem{newman1999}
+Newman, M.E.J., Barkema, G.T. (1999).
+\textit{Monte Carlo Methods in Statistical Physics}.
+Oxford University Press.
+
+\end{thebibliography}

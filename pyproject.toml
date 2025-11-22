@@ -6,7 +6,7 @@ authors = [
     {name = "Sergio Andrés Díaz Vera", email = "seadiazve@unal.edu.co"},
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 license = {text = "MIT"}
 
 dependencies = [
@@ -17,6 +17,8 @@ dependencies = [
     "jupyter>=1.1.0",
     "ipykernel>=6.30.0",
     "scipy>=1.15.0",
+    "networkx>=3.5",
+    "tqdm>=4.67.1",
 ]
 
 [project.optional-dependencies]

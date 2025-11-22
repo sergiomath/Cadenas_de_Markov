@@ -63,52 +63,202 @@ Estado n-1:  P(n-1→n-1)=p, P(n-1→n-2)=1-p
 
 **El Método 1 (Vectores Propios) es superior en eficiencia para la mayoría de casos**, especialmente con aceleración GPU. El Método 2 solo es competitivo para matrices muy pequeñas (n<20).
 
-## Instalación
+## Instalación Paso a Paso
 
-Este proyecto utiliza [UV](https://docs.astral.sh/uv/) como manejador de paquetes moderno y rápido.
+### Prerequisitos
 
-### Instalar UV
+- **Python 3.8 o superior** - Verificar versión:
+  ```bash
+  python --version
+  ```
 
+- **Git** (para clonar el repositorio):
+  ```bash
+  git --version
+  ```
+
+- **GPU NVIDIA con CUDA** (opcional, para aceleración):
+  ```bash
+  nvidia-smi  # Verificar GPU disponible
+  ```
+
+---
+
+### Opción 1: Instalación con UV (Recomendado)
+
+UV es un manejador de paquetes moderno, más rápido que pip tradicional.
+
+#### Paso 1: Instalar UV
+
+**Linux/macOS:**
 ```bash
-# Linux/macOS
 curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-# Windows (PowerShell)
+**Windows (PowerShell como Administrador):**
+```powershell
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
 
-# Alternativamente con pip
+**Alternativa multiplataforma (con pip):**
+```bash
 pip install uv
 ```
 
-### Instalación de Dependencias
+**Verificar instalación:**
+```bash
+uv --version
+```
+
+#### Paso 2: Clonar el Repositorio
 
 ```bash
-# Instalar dependencias básicas
+git clone <URL_DEL_REPOSITORIO>
+cd Cadenas_de_Markov
+```
+
+#### Paso 3: Instalar Dependencias
+
+**Solo CPU (suficiente para la mayoría de casos):**
+```bash
 uv sync
+```
 
-# Instalar con soporte GPU (CUDA 12.x)
+**Con soporte GPU (requiere CUDA 12.x):**
+```bash
 uv sync --extra gpu
+```
 
-# Instalar con soporte GPU (CUDA 11.x)
+**Con soporte GPU (CUDA 11.x):**
+```bash
 uv sync --extra gpu-cuda11
 ```
 
-### Verificar GPU (Opcional)
+**Nota:** UV creará automáticamente un entorno virtual en `.venv/`
+
+#### Paso 4: Verificar Instalación
+
 ```bash
-nvidia-smi
+uv run python -c "
+import sys
+sys.path.append('Primer_Parcial')
+from src.markov_matrix import *
+P = crear_matriz_probabilidad(5, 0.7)
+pi = calcular_distribucion_metodo_autovalores(P)
+print(f'✅ Instalación exitosa - Suma π: {pi.sum():.10f}')
+"
 ```
 
-### Instalación Legacy (sin UV)
+**Salida esperada:** `✅ Instalación exitosa - Suma π: 1.0000000000`
 
-Si prefieres usar pip tradicional:
+---
 
+### Opción 2: Instalación Legacy con pip
+
+Si prefieres usar pip tradicional o tienes problemas con UV:
+
+#### Paso 1: Clonar el Repositorio
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd Cadenas_de_Markov
+```
+
+#### Paso 2: Crear Entorno Virtual (Recomendado)
+
+**Linux/macOS:**
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows:**
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+#### Paso 3: Instalar Dependencias
+
+**Solo CPU:**
 ```bash
 pip install -r requirements.txt
-
-# GPU opcional
-pip install cupy-cuda12x  # CUDA 12.x
-pip install cupy-cuda11x  # CUDA 11.x
 ```
+
+**Con soporte GPU (CUDA 12.x):**
+```bash
+pip install -r requirements.txt
+pip install cupy-cuda12x
+```
+
+**Con soporte GPU (CUDA 11.x):**
+```bash
+pip install -r requirements.txt
+pip install cupy-cuda11x
+```
+
+#### Paso 4: Verificar Instalación
+
+```bash
+python -c "
+import sys
+sys.path.append('Primer_Parcial')
+from src.markov_matrix import *
+P = crear_matriz_probabilidad(5, 0.7)
+pi = calcular_distribucion_metodo_autovalores(P)
+print(f'✅ Instalación exitosa - Suma π: {pi.sum():.10f}')
+"
+```
+
+---
+
+### Verificación Completa de GPU (Opcional)
+
+Si instalaste soporte GPU, verifica que funcione correctamente:
+
+```bash
+# Verificar GPU detectada
+nvidia-smi
+
+# Test GPU con el proyecto
+uv run python -c "
+import sys
+sys.path.append('Primer_Parcial')
+from src.markov_matrix import *
+
+info = get_gpu_info()
+if info['available']:
+    print(f\"✅ GPU detectada: {info['name']}\")
+    print(f\"   Memoria: {info['memory_total']:.2f} GB\")
+
+    # Test rápido
+    P = crear_matriz_probabilidad(100, 0.7)
+    pi = calcular_distribucion_metodo_autovalores_gpu(P)
+    print(f\"✅ Cálculo GPU exitoso - Suma π: {pi.sum():.10f}\")
+else:
+    print('❌ GPU no disponible')
+"
+```
+
+---
+
+### Solución de Problemas Comunes
+
+**Problema: `ModuleNotFoundError: No module named 'cupy'`**
+- Solución: Instalar CuPy según tu versión de CUDA (ver arriba)
+
+**Problema: UV no reconocido en terminal**
+- Solución: Reiniciar terminal o agregar UV al PATH manualmente
+- Linux/macOS: `export PATH="$HOME/.cargo/bin:$PATH"`
+
+**Problema: GPU no detectada**
+- Verificar drivers NVIDIA: `nvidia-smi`
+- Verificar versión CUDA: `nvcc --version`
+- Instalar CuPy compatible con tu versión de CUDA
+
+**Problema: Tests fallan con error de suma ≠ 1.0**
+- Normal si la diferencia es < 1e-10 (error numérico)
+- Si diferencia > 1e-6, verificar instalación de NumPy/SciPy
 
 ## Uso
 
