@@ -1,0 +1,191 @@
+\begin{frame}{Introducción}
+La ruleta es uno de los juegos de azar más emblemáticos en casinos. A pesar de su aparente simplicidad, constituye un laboratorio matemático para estudiar procesos estocásticos y estrategias de apuesta.
+
+\vspace{0.3cm}
+
+\textbf{Preguntas de investigación:}
+\begin{itemize}
+    \item ¿Qué estrategia permite al jugador permanecer más tiempo en juego antes de la ruina?
+    \item ¿Qué modalidad maximiza la probabilidad de duplicar el capital inicial?
+    \item ¿Cómo varía el comportamiento del sistema con el capital inicial?
+\end{itemize}
+
+\vspace{0.3cm}
+
+Estas preguntas se abordan mediante un modelo de cadenas de Markov, comparando estrategias (color, par/impar, docena, cuadro, pleno) y analizando la evolución del capital del jugador.
+
+\end{frame}
+
+\begin{frame}{Objetivos}
+\begin{block}{Objetivo general}
+Analizar el desempeño de diferentes estrategias de apuesta en ruleta mediante simulaciones Monte Carlo de cadenas de Markov, determinando cuáles maximizan la probabilidad de alcanzar una meta de ganancias o minimizan el riesgo de ruina.
+\end{block}
+
+\vspace{0.3cm}
+
+\begin{block}{Objetivos específicos}
+\scriptsize
+\begin{enumerate}
+    \item Modelar la evolución del capital mediante cadenas de Markov para distintas modalidades de apuesta.
+    \item Calcular probabilidades de transición considerando pagos reales y ventaja de la casa.
+    \item Estimar y comparar el tiempo esperado hasta la absorción para cada estrategia.
+    \item Establecer cuál estrategia es probabilísticamente más favorable.
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{Marco teórico}
+\begin{block}{Cadenas de Markov}
+
+Una cadena de Markov es un proceso estocástico donde el estado futuro depende únicamente del estado actual, no del pasado (\emph{propiedad markoviana}):
+
+\[
+\mathbb{P}(X_{n+1} = j \mid X_n = i, X_{n-1}, \dots, X_0)
+= \mathbb{P}(X_{n+1} = j \mid X_n = i) = p_{ij}
+\]
+
+Las probabilidades de transición $p_{ij}$ forman la matriz $P = (p_{ij})_{i,j=0}^{N}$, donde cada fila suma 1 ($\sum_{j} p_{ij} = 1$).
+
+\vspace{0.2cm}
+
+\textbf{En nuestro problema:} Los estados son niveles de capital, y las transiciones ocurren según el resultado de cada apuesta.
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Marco teórico}
+\begin{block}{Ruleta europea}
+
+La ruleta europea tiene 37 casillas (0 a 36), cada una con probabilidad $\frac{1}{37}$.
+
+\vspace{-0.1cm}
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{lp{4.5cm}cc}
+\hline
+\textbf{Tipo} & \textbf{Descripción} & \textbf{Pago} & $p$ \\ \hline
+Color & Rojo o negro (18 números) & 1:1 & $48.6\%$ \\
+Par/Impar & Números pares o impares & 1:1 & $48.6\%$ \\
+Docena & Grupo de 12 números (1-12, 13-24, 25-36) & 2:1 & $32.4\%$ \\
+Seisena & 6 números en dos filas adyacentes & 5:1 & $16.2\%$ \\
+Cuadro & 4 números en esquina & 8:1 & $10.8\%$ \\
+Pleno & Un solo número & 35:1 & $2.7\%$ \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{-0.1cm}
+\textbf{Ventaja de la casa:} El cero garantiza $p < 0.5$ en todas las apuestas.
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Marco teórico}
+\begin{block}{Modelo de ruina del jugador}
+
+Modelamos el capital como una cadena de Markov con:
+\begin{itemize}
+    \item \textbf{Capital inicial:} $X_0 = x$
+    \item \textbf{Estados absorbentes:} $0$ (bancarrota) y $M$ (meta de ganancia)
+    \item \textbf{Apuesta fija:} $b$ unidades en cada ronda
+\end{itemize}
+
+El capital evoluciona según:
+\[
+X_{n+1} =
+\begin{cases}
+X_n + b, & \text{con probabilidad } p \text{ (gana)}\\
+X_n - b, & \text{con probabilidad } q = 1-p \text{ (pierde)}
+\end{cases}
+\]
+
+En ruleta $p < \frac{1}{2}$, el juego es estructuralmente desfavorable.
+
+\end{block}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Marco teórico}
+\begin{block}{Probabilidades de absorción}
+
+¿Cuál es la probabilidad de duplicar el capital antes de arruinarse?
+
+\vspace{0.2cm}
+
+Sea $h_x$ la probabilidad de alcanzar la meta $M$ antes de la ruina $0$, partiendo de capital $x$. La solución depende de si el juego es justo:
+
+\[
+h_x =
+\begin{cases}
+\dfrac{1 - \left( \frac{q}{p} \right)^x}{1 - \left( \frac{q}{p} \right)^M}, & \text{si } p \neq q \text{ (juego sesgado)} \\[10pt]
+\dfrac{x}{M}, & \text{si } p = q = \frac{1}{2} \text{ (juego justo)}
+\end{cases}
+\]
+
+\textbf{En ruleta:} Como $p < q$, entonces $\frac{q}{p} > 1$, por lo que $h_x$ decrece exponencialmente con el capital objetivo. La casa siempre tiene ventaja.
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Marco teórico}
+\begin{block}{Tiempo esperado de absorción}
+
+¿Cuántas apuestas puede hacer el jugador antes de arruinarse o alcanzar su meta?
+
+\vspace{0.2cm}
+
+El tiempo esperado $t_x$ (número de rondas) satisface una ecuación recursiva:
+
+\[
+t_x = 1 + p\, t_{x+b} + q\, t_{x-b}, \quad t_0 = t_M = 0
+\]
+
+La solución en forma cerrada para $p \neq q$ es:
+
+\[
+t_x = \frac{x}{q-p} - \frac{M}{q-p}
+\frac{1 - \left( \frac{q}{p} \right)^x}{1 - \left( \frac{q}{p} \right)^M}
+\]
+
+\textbf{Interpretación:} Permite comparar estrategias. Un $t_x$ mayor significa más tiempo de juego (entretenimiento prolongado).
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Marco teórico}
+\begin{block}{Simulaciones Monte Carlo}
+
+Técnica numérica para estimar cantidades probabilísticas cuando las fórmulas exactas son complejas o intratables.
+
+\vspace{0.2cm}
+
+\textbf{Metodología:}
+\begin{enumerate}
+    \scriptsize
+    \item Simular miles de juegos independientes con las reglas de cada tipo de apuesta
+    \item En cada simulación, evolucionar el capital ronda por ronda hasta alcanzar $0$ o $M$
+    \item Registrar el resultado (éxito/fracaso) y el número de rondas
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\textbf{Estimaciones obtenidas:}
+\begin{itemize}
+    \scriptsize
+    \item \textbf{Probabilidad de éxito:} Proporción de simulaciones que alcanzan $M$
+    \item \textbf{Tiempo medio:} Promedio de rondas hasta absorción
+\end{itemize}
+
+\vspace{0.1cm}
+
+Con 100,000 simulaciones, los resultados convergen a los valores teóricos (Ley de Grandes Números).
+
+\end{block}
+\end{frame}

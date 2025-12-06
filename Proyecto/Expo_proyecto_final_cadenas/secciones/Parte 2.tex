@@ -1,0 +1,101 @@
+\begin{frame}{Aplicación y resultados}
+\begin{block}{Aplicación Ruleta Casino}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=8cm]{secciones/tablero.jpg}
+\caption{Tablero de apuestas - Ruleta Europea}
+\label{fig:tablero}
+\end{figure}
+\end{block}
+\end{frame}
+
+\begin{frame}{Aplicación y resultados}
+\begin{block}{Matriz de transición, color con meta N=10}
+\[
+P =
+\left[\begin{array}{ccccccccccc}
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{19}{37} & 0 & \frac{18}{37} \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+
+\end{array}
+\right]
+\]
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Aplicación y resultados}
+\begin{block}{Probabilidad estado para $1\leq n\leq 100$ }
+\begin{figure}[h!]
+\centering
+\includegraphics[width=6cm]{secciones/teoria.png}
+\caption{Resultado de $\pi_0*P^n$ para $1\leq n\leq 100$}
+\label{fig:tablero}
+\end{figure}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Aplicación y resultados}
+\scriptsize
+\begin{block}{Simulaciones Monte Carlo}
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\hline
+Escenario & Tipo de apuesta & Tipo de ruleta & Prob. de éxito & Tiempo medio \\ \hline
+\$5 \textrightarrow \$10 & docena     & europea   & 43.73\% & $13.4 \pm 10.4$ \\
+\$5 \textrightarrow \$10 & seisena    & europea   & 44.52\% & $6.3 \pm 4.6$ \\
+\$50 \textrightarrow \$100 & semipleno & europea   & 43.29\% & $163.7 \pm 131.7$ \\
+\$5 \textrightarrow \$10 & color      & europea   & 43.21\% & $24.9 \pm 19.9$ \\
+\$50 \textrightarrow \$100 & pleno    & europea   & 43.87\% & $88.5 \pm 68.7$ \\
+\$5 \textrightarrow \$10 & seisena    & americana & 41.29\% & $6.3 \pm 4.5$ \\
+\$5 \textrightarrow \$10 & docena     & americana & 41.27\% & $13.5 \pm 10.4$ \\
+\$5 \textrightarrow \$10 & cuadro     & europea   & 41.06\% & $4.5 \pm 2.5$ \\
+\$50 \textrightarrow \$100 & pleno    & americana & 41.74\% & $88.9 \pm 67.8$ \\
+\$50 \textrightarrow \$100 & cuadro   & europea   & 40.46\% & $326.7 \pm 262.3$ \\ \hline
+\end{tabular}
+\caption{Resultados de 100000 simulaciones Monte Carlo (primeras 10 filas).}
+\end{table}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Aplicación y resultados}
+\begin{block}{Graficos}
+\begin{figure}[H]
+    \centering
+
+    \subfigure[Probabilidad duplicar]{%
+        \includegraphics[width=0.45\textwidth]{secciones/graf_1.png}
+    }\hfill
+    \subfigure[Tiempo medio absorción]{%
+        \includegraphics[width=0.45\textwidth]{secciones/graf_2.png}
+    }
+
+   % \caption{Comparación de ambos gráficos.}
+\end{figure}
+\end{block}
+\end{frame}
+
+\begin{frame}{Conclusiones}
+\begin{itemize}
+\item El método de simulaciones Monte Carlo, al emplear un número suficientemente grande de repeticiones, produce resultados que se ajustan notablemente a los valores teóricos, confirmando la validez del modelo y la consistencia del enfoque numérico.
+
+\item Para maximizar la probabilidad de éxito al intentar duplicar el capital, resulta más conveniente fijar una meta pequeña y apostar a la docena, ya que esta modalidad presenta el mayor porcentaje de éxito en dichos escenarios.
+
+\item Si el objetivo del jugador es prolongar su permanencia en el juego antes de alcanzar un estado absorbente (bancarrota o duplicar el capital), la estrategia más efectiva es apostar al color, pues es la que ofrece un mayor tiempo medio de absorción.
+
+\item Las simulaciones muestran que jugar en una ruleta americana reduce de manera significativa la probabilidad de éxito en comparación con la ruleta europea. Por lo tanto, desde el punto de vista probabilístico, apostar en ruletas europeas resulta más favorable.
+
+\end{itemize}
+\end{frame}
